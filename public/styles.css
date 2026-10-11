@@ -459,6 +459,7 @@ input:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  height: 48px;
   min-height: 48px;
   padding: 0 18px 0 10px;
   border-radius: 999px;
@@ -471,6 +472,7 @@ input:focus-visible {
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.35s ease, transform 0.35s ease;
+  overflow: hidden;
 }
 .chat-launcher.is-visible {
   visibility: visible;
@@ -478,13 +480,26 @@ input:focus-visible {
   transform: translateY(0);
 }
 
+/* Open state: collapse to a plain circle with only the close icon. Width,
+   padding and justify-content change instantly (not animated — only
+   opacity/transform are transitioned, per spec); the label is removed from
+   layout via display:none *and* zero width/overflow as a second guard so it
+   can never render or occupy space while the circle is this small. */
+.chat-launcher.is-open {
+  width: 52px;
+  height: 52px;
+  min-height: 52px;
+  padding: 0;
+  justify-content: center;
+}
+
 .chat-launcher-icon {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--green);
   flex: none;
@@ -494,6 +509,7 @@ input:focus-visible {
   align-items: center;
   justify-content: center;
 }
+.chat-launcher-icon-glyph svg { display: block; }
 .chat-launcher-status-dot {
   position: absolute;
   right: -2px;
@@ -504,21 +520,29 @@ input:focus-visible {
   background: var(--green);
   border: 2px solid var(--navy);
 }
+.chat-launcher.is-open .chat-launcher-status-dot { display: none; }
+
 .chat-launcher-label {
+  display: inline-block;
   font-weight: 700;
   font-size: 15px;
   white-space: nowrap;
+  overflow: hidden;
 }
 .chat-launcher-label--short { display: none; }
 @media (max-width: 359px) {
   .chat-launcher-label--full { display: none; }
-  .chat-launcher-label--short { display: inline; }
+  .chat-launcher-label--short { display: inline-block; }
 }
-.chat-launcher.is-open .chat-launcher-label { display: none; }
-.chat-launcher.is-open {
-  padding: 0;
-  width: 52px;
-  justify-content: center;
+/* Belt-and-braces: in the open state the label is both display:none AND
+   collapsed to zero width with hidden overflow, so a stale cascade or a
+   mid-transition frame can never show or reserve space for the text. */
+.chat-launcher.is-open .chat-launcher-label {
+  display: none;
+  width: 0;
+  max-width: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 .chat-launcher-unread-dot {
@@ -553,22 +577,51 @@ input:focus-visible {
   position: fixed;
   right: 20px;
   bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-  max-width: min(260px, calc(100vw - 40px));
+  max-width: min(280px, calc(100vw - 40px));
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 16px 16px 4px 16px;
   box-shadow: 0 14px 34px rgba(11, 42, 87, 0.22);
-  padding: 12px 32px 12px 14px;
+  padding: 14px 32px 14px 14px;
   font-size: 14px;
   color: var(--ink);
   z-index: 39;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
 }
 .chat-launcher-teaser.is-visible { opacity: 1; transform: translateY(0); }
 .chat-launcher-teaser[hidden] { display: none; }
+.chat-launcher-teaser-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--navy);
+}
+.chat-launcher-teaser-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex: none;
+}
 .chat-launcher-teaser p { margin: 0; }
+.chat-launcher-teaser-tail {
+  position: absolute;
+  right: 22px;
+  bottom: -8px;
+  width: 16px;
+  height: 16px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: rotate(45deg);
+  border-radius: 0 0 4px 0;
+}
 .chat-launcher-teaser-close {
   position: absolute;
   top: 6px;
@@ -586,13 +639,17 @@ input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 .chat-launcher-teaser-close:hover { background: var(--ground); }
 
 .chat-widget--floating {
   position: fixed;
   right: 20px;
-  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  /* Launcher is 20px from the bottom and 52px tall when open (the circle) —
+     92px leaves a clear ~20px gap above it at every width, comfortably
+     above the 12px minimum. */
+  bottom: calc(92px + env(safe-area-inset-bottom, 0px));
   width: min(360px, calc(100vw - 32px));
   max-height: min(70vh, 540px);
   margin-right: 0;
@@ -600,6 +657,16 @@ input:focus-visible {
 }
 .chat-widget--floating[hidden] { display: none; }
 .chat-widget--floating .chat-messages { max-height: 320px; }
+
+/* Mobile: nearly full width with even 12px side margins, instead of the
+   fixed-width card used on larger screens. */
+@media (max-width: 599px) {
+  .chat-widget--floating {
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+}
 
 /* ---------- How it helps ---------- */
 .section { padding: 44px 16px 8px; }

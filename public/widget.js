@@ -40,12 +40,14 @@
   var AUTO_OPEN_DELAY_MS = 2000;
   var AUTO_OPEN_SESSION_KEY = 'fs_widget_autoopened';
   var LAUNCHER_APPEAR_DELAY_MS = 1000;
-  var TEASER_DELAY_MS = 4000;
+  var TEASER_DELAY_MS = 3000;
+  var TEASER_AUTO_HIDE_MS = 12000;
   var TEASER_SESSION_KEY = 'fs_launcher_teaser_shown';
-  var TEASER_TEXT = 'Hi! Ask me anything about our service.';
 
-  var LAUNCHER_CHAT_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>';
-  var LAUNCHER_CLOSE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>';
+  // Rounded chat bubble + 4-point sparkle — matches the markup in index.html
+  // (used here only to restore the icon when the panel closes).
+  var LAUNCHER_CHAT_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 4.5h8A3.5 3.5 0 0 1 17.5 8v4A3.5 3.5 0 0 1 14 15.5h-3.6L7 18v-2.6A3.5 3.5 0 0 1 3.5 12V8A3.5 3.5 0 0 1 6 4.5Z" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19.5 2.3l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6Z" fill="#FFFFFF"></path></svg>';
+  var LAUNCHER_CLOSE_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>';
 
   var conversation = []; // { role: 'user' | 'assistant', text: string } — memory only, never persisted
   var greetingShown = false;
@@ -55,7 +57,7 @@
   var recognizing = false;
   var activeMicPlacement = null;
   var floatingOpen = false;
-  var heroCurrentlyVisible = false; // tracked for teaser gating only — launcher itself is always visible
+  var teaserAutoHideTimer = null;
 
   var prefersReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -121,7 +123,7 @@
     html += '<div class="chat-messages" aria-live="polite" role="log"></div>';
     html += '<div class="chat-input-row">';
     html += '<label class="visually-hidden" for="chat-input-' + placement + '">Type your question</label>';
-    html += '<input type="text" id="chat-input-' + placement + '" class="chat-input" placeholder="Type your question…" maxlength="' + MAX_MESSAGE_LENGTH + '">';
+    html += '<input type="text" id="chat-input-' + placement + '" class="chat-input" placeholder="Ask a question..." maxlength="' + MAX_MESSAGE_LENGTH + '">';
     html += '<button type="button" class="chat-icon-btn chat-mic-btn" aria-label="Speak your question" aria-pressed="false"' + (recognition ? '' : ' hidden') + '>';
     html += '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14529B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>';
     html += '</button>';
@@ -343,26 +345,19 @@
     }
   });
 
-  // Hero visibility is tracked only to gate the teaser bubble now — the
-  // launcher itself is always visible from load (see showLauncher below).
-  if (heroChatFrame && 'IntersectionObserver' in window) {
-    var heroObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        heroCurrentlyVisible = entry.isIntersecting;
-        if (heroCurrentlyVisible) hideTeaser();
-      });
-    }, { threshold: 0.15 });
-    heroObserver.observe(heroChatFrame);
-  }
-
+  // heroChatFrame is only used by the 2-second auto-open check below — a
+  // plain bounding-rect test, no IntersectionObserver. The teaser no longer
+  // cares about hero visibility at all (see showTeaser).
   function heroInView() {
     if (!heroChatFrame) return true;
-    if ('IntersectionObserver' in window) return heroCurrentlyVisible;
     var rect = heroChatFrame.getBoundingClientRect();
     var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
     return rect.bottom > 0 && rect.top < viewportHeight;
   }
 
+  // Unchanged: always shows the greeting in the hero widget at 2s. Only
+  // auto-opens the FLOATING PANEL if the visitor has scrolled past the
+  // hero by then — the teaser (below) is the invitation otherwise.
   function scheduleAutoOpen() {
     var already = null;
     try { already = sessionStorage.getItem(AUTO_OPEN_SESSION_KEY); } catch (e) { already = null; }
@@ -393,8 +388,10 @@
     }
   }
 
-  // Teaser bubble: once per session, hidden if the panel is open or the
-  // hero chat card (which already shows the same greeting) is in view.
+  // Teaser bubble: shows once per session, 3s after load, regardless of
+  // hero visibility — the only thing that suppresses it is the panel
+  // already being open. Auto-hides after 12s, or sooner if the panel
+  // opens or the visitor closes it.
   function teaserAlreadyShownThisSession() {
     var already = null;
     try { already = sessionStorage.getItem(TEASER_SESSION_KEY); } catch (e) { already = null; }
@@ -403,16 +400,22 @@
 
   function showTeaser() {
     if (!teaserEl || teaserAlreadyShownThisSession()) return;
-    if (floatingOpen || heroInView()) return;
+    if (floatingOpen) return;
     teaserEl.hidden = false;
     // Force a reflow so the transition plays, then trigger it.
     void teaserEl.offsetWidth;
     teaserEl.classList.add('is-visible');
     try { sessionStorage.setItem(TEASER_SESSION_KEY, '1'); } catch (e) { /* ignore */ }
     if (!chatEverOpened && launcherUnreadDot) launcherUnreadDot.hidden = false;
+    teaserAutoHideTimer = setTimeout(hideTeaser, TEASER_AUTO_HIDE_MS);
   }
 
   function hideTeaser() {
+    if (teaserAutoHideTimer) {
+      clearTimeout(teaserAutoHideTimer);
+      teaserAutoHideTimer = null;
+    }
+    hideLauncherUnreadDot();
     if (!teaserEl || teaserEl.hidden) return;
     teaserEl.hidden = true;
     teaserEl.classList.remove('is-visible');
@@ -424,7 +427,14 @@
   }
 
   if (teaserCloseBtn) {
-    teaserCloseBtn.addEventListener('click', hideTeaser);
+    teaserCloseBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      hideTeaser();
+    });
+  }
+  if (teaserEl) {
+    // Clicking the teaser itself (outside the close button) opens the chat.
+    teaserEl.addEventListener('click', openFloating);
   }
 
   function initWidget(placement, rootEl) {
