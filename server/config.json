@@ -1,0 +1,52 @@
+{
+  "_comment": "config.json — All business-specific data for this client project: branding, system prompt, services, contacts, caps. Built in: Phase 1 (Fri Soft demo site) and Phase 2 (template-ization). Skeleton only — see docs/ briefs for source rules. Values not given in the briefs are marked TODO: confirm.",
+  "businessName": "Fri Soft Ltd",
+  "model": "claude-haiku-5-5",
+  "systemPrompt": "You are a friendly, concise assistant for Fri Soft Ltd, a software company in Kigali, Rwanda. Answer only from the services, prices, hours and contacts in this config. If unsure, say so honestly and offer to connect the visitor to a person. Never invent prices, timelines or promises. Keep answers to 2-4 sentences and ask one question at a time. When a visitor shows buying interest, ask for their name and phone or email to capture a lead. Stay on Fri Soft's business and politely decline unrelated requests. TODO: confirm final tone/voice and any additions once real FAQs are collected.",
+  "services": [
+    {
+      "name": "Dish Dash",
+      "description": "TODO: confirm — restaurant ordering SaaS.",
+      "price": "TODO: confirm"
+    },
+    {
+      "name": "FSA_v2",
+      "description": "TODO: confirm — trading journal.",
+      "price": "TODO: confirm"
+    },
+    {
+      "name": "Custom web development",
+      "description": "TODO: confirm",
+      "price": "TODO: confirm"
+    },
+    {
+      "name": "Private business email hosting",
+      "description": "TODO: confirm",
+      "price": "TODO: confirm"
+    }
+  ],
+  "hours": "TODO: confirm",
+  "contacts": {
+    "email": "frisoftltd@gmail.com",
+    "phone": "TODO: confirm",
+    "whatsapp": "TODO: confirm",
+    "location": "Kigali, Rwanda"
+  },
+  "brand": {
+    "colors": {
+      "primary": "TODO: confirm",
+      "accent": "TODO: confirm",
+      "background": "TODO: confirm"
+    }
+  },
+  "greeting": "Hi, how can I help you?",
+  "quickButtons": ["Services", "Pricing", "Book a call", "Contact"],
+  "leadEmail": "frisoftltd@gmail.com",
+  "allowedDomain": "TODO: confirm",
+  "monthlyMessageCap": "TODO: confirm",
+  "languages": {
+    "default": "en",
+    "supported": ["en", "fr"],
+    "bestEffort": ["rw"]
+  }
+}

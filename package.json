@@ -1,0 +1,13 @@
+{
+  "name": "frisoft-ai-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single-tenant template: static site + AI chat/voice agent + lead capture, for Fri Soft Ltd and future client copies.",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
