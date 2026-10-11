@@ -39,14 +39,25 @@
   var MAX_HISTORY = 10;
   var AUTO_OPEN_DELAY_MS = 2000;
   var AUTO_OPEN_SESSION_KEY = 'fs_widget_autoopened';
+  var LAUNCHER_APPEAR_DELAY_MS = 1000;
+  var TEASER_DELAY_MS = 4000;
+  var TEASER_SESSION_KEY = 'fs_launcher_teaser_shown';
+  var TEASER_TEXT = 'Hi! Ask me anything about our service.';
+
+  var LAUNCHER_CHAT_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>';
+  var LAUNCHER_CLOSE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>';
 
   var conversation = []; // { role: 'user' | 'assistant', text: string } — memory only, never persisted
   var greetingShown = false;
+  var chatEverOpened = false; // true once the greeting has been shown anywhere (hero or floating)
   var isTyping = false;
   var speakerOn = false;
   var recognizing = false;
   var activeMicPlacement = null;
   var floatingOpen = false;
+  var heroCurrentlyVisible = false; // tracked for teaser gating only — launcher itself is always visible
+
+  var prefersReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   var widgets = {}; // placement -> { root, messagesEl, inputEl, micBtn, speakerBtn, sendBtn }
 
@@ -177,6 +188,8 @@
   function showGreeting() {
     if (greetingShown) return;
     greetingShown = true;
+    chatEverOpened = true;
+    hideLauncherUnreadDot();
     renderMessages();
   }
 
@@ -274,14 +287,36 @@
   }
 
   var launcherBtn = document.getElementById('chat-launcher');
+  var launcherIconGlyph = launcherBtn && launcherBtn.querySelector('.chat-launcher-icon-glyph');
+  var launcherUnreadDot = launcherBtn && launcherBtn.querySelector('.chat-launcher-unread-dot');
+  var teaserEl = document.getElementById('chat-launcher-teaser');
+  var teaserCloseBtn = teaserEl && teaserEl.querySelector('.chat-launcher-teaser-close');
   var heroChatFrame = document.getElementById('chat');
+
+  function hideLauncherUnreadDot() {
+    if (launcherUnreadDot) launcherUnreadDot.hidden = true;
+  }
+
+  // aria-expanded, aria-label and the icon glyph all reflect open/closed state.
+  // Decision: the launcher ITSELF becomes the close control while the panel
+  // is open (compact circle, "x" icon) rather than hiding — see Step report.
+  function updateLauncherOpenState(isOpen) {
+    if (!launcherBtn) return;
+    launcherBtn.classList.toggle('is-open', isOpen);
+    launcherBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    launcherBtn.setAttribute('aria-label', isOpen ? 'Close chat' : 'Open chat with Fri Soft AI assistant');
+    if (launcherIconGlyph) {
+      launcherIconGlyph.innerHTML = isOpen ? LAUNCHER_CLOSE_ICON : LAUNCHER_CHAT_ICON;
+    }
+  }
 
   function openFloating() {
     var w = widgets.floating;
     if (!w) return;
     w.root.hidden = false;
     floatingOpen = true;
-    if (launcherBtn) launcherBtn.setAttribute('aria-expanded', 'true');
+    updateLauncherOpenState(true);
+    hideTeaser();
     if (!greetingShown) showGreeting();
     renderMessages();
     setTimeout(function () { w.inputEl.focus(); }, 50);
@@ -292,10 +327,8 @@
     if (!w) return;
     w.root.hidden = true;
     floatingOpen = false;
-    if (launcherBtn) {
-      launcherBtn.setAttribute('aria-expanded', 'false');
-      launcherBtn.focus();
-    }
+    updateLauncherOpenState(false);
+    if (launcherBtn) launcherBtn.focus();
   }
 
   if (launcherBtn) {
@@ -310,21 +343,21 @@
     }
   });
 
-  if (heroChatFrame && launcherBtn) {
-    if ('IntersectionObserver' in window) {
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          launcherBtn.classList.toggle('is-visible', !entry.isIntersecting);
-        });
-      }, { threshold: 0.15 });
-      observer.observe(heroChatFrame);
-    } else {
-      launcherBtn.classList.add('is-visible');
-    }
+  // Hero visibility is tracked only to gate the teaser bubble now — the
+  // launcher itself is always visible from load (see showLauncher below).
+  if (heroChatFrame && 'IntersectionObserver' in window) {
+    var heroObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        heroCurrentlyVisible = entry.isIntersecting;
+        if (heroCurrentlyVisible) hideTeaser();
+      });
+    }, { threshold: 0.15 });
+    heroObserver.observe(heroChatFrame);
   }
 
   function heroInView() {
     if (!heroChatFrame) return true;
+    if ('IntersectionObserver' in window) return heroCurrentlyVisible;
     var rect = heroChatFrame.getBoundingClientRect();
     var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
     return rect.bottom > 0 && rect.top < viewportHeight;
@@ -341,6 +374,57 @@
         openFloating();
       }
     }, AUTO_OPEN_DELAY_MS);
+  }
+
+  // Launcher appears ~1s after load and stays visible at every scroll
+  // position. A short attention pulse (3 rings, CSS-limited, no JS loop)
+  // plays once right after it appears, unless reduced motion is requested.
+  function showLauncher() {
+    if (!launcherBtn) return;
+    launcherBtn.classList.add('is-visible');
+    if (!prefersReducedMotion) {
+      launcherBtn.classList.add('is-pulsing');
+      launcherBtn.addEventListener('animationend', function onPulseEnd(e) {
+        if (e.target === launcherBtn.querySelector('.chat-launcher-ring')) {
+          launcherBtn.classList.remove('is-pulsing');
+          launcherBtn.removeEventListener('animationend', onPulseEnd);
+        }
+      });
+    }
+  }
+
+  // Teaser bubble: once per session, hidden if the panel is open or the
+  // hero chat card (which already shows the same greeting) is in view.
+  function teaserAlreadyShownThisSession() {
+    var already = null;
+    try { already = sessionStorage.getItem(TEASER_SESSION_KEY); } catch (e) { already = null; }
+    return !!already;
+  }
+
+  function showTeaser() {
+    if (!teaserEl || teaserAlreadyShownThisSession()) return;
+    if (floatingOpen || heroInView()) return;
+    teaserEl.hidden = false;
+    // Force a reflow so the transition plays, then trigger it.
+    void teaserEl.offsetWidth;
+    teaserEl.classList.add('is-visible');
+    try { sessionStorage.setItem(TEASER_SESSION_KEY, '1'); } catch (e) { /* ignore */ }
+    if (!chatEverOpened && launcherUnreadDot) launcherUnreadDot.hidden = false;
+  }
+
+  function hideTeaser() {
+    if (!teaserEl || teaserEl.hidden) return;
+    teaserEl.hidden = true;
+    teaserEl.classList.remove('is-visible');
+  }
+
+  function scheduleTeaser() {
+    if (teaserAlreadyShownThisSession()) return;
+    setTimeout(showTeaser, TEASER_DELAY_MS);
+  }
+
+  if (teaserCloseBtn) {
+    teaserCloseBtn.addEventListener('click', hideTeaser);
   }
 
   function initWidget(placement, rootEl) {
@@ -389,6 +473,8 @@
     if (floatingRoot) initWidget('floating', floatingRoot);
     renderMessages();
     scheduleAutoOpen();
+    setTimeout(showLauncher, LAUNCHER_APPEAR_DELAY_MS);
+    scheduleTeaser();
   }
 
   if (document.readyState === 'loading') {

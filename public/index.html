@@ -358,14 +358,26 @@
 <footer class="site-footer">
   <div class="footer-inner">
     <span>© 2026 Fri Soft Ltd, Kigali, Rwanda</span>
-    <span>Also from Fri Soft Ltd: Dish Dash, FSA_v2 and private business email hosting.</span>
   </div>
 </footer>
 
-<!-- Floating launcher, shown once the hero chat scrolls out of view -->
-<button id="chat-launcher" class="chat-launcher" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-widget-floating" aria-label="Chat with the Fri Soft assistant">
-  <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>
+<!-- Floating launcher: always visible, fades in ~1s after load -->
+<button id="chat-launcher" class="chat-launcher" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-widget-floating" aria-label="Open chat with Fri Soft AI assistant">
+  <span class="chat-launcher-ring" aria-hidden="true"></span>
+  <span class="chat-launcher-icon" aria-hidden="true">
+    <span class="chat-launcher-icon-glyph"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg></span>
+    <span class="chat-launcher-status-dot"></span>
+  </span>
+  <span class="chat-launcher-label chat-launcher-label--full">Ask our AI</span>
+  <span class="chat-launcher-label chat-launcher-label--short">Chat</span>
+  <span class="chat-launcher-unread-dot" aria-hidden="true" hidden></span>
 </button>
+
+<!-- Teaser bubble, shown once per session next to the launcher -->
+<div id="chat-launcher-teaser" class="chat-launcher-teaser" role="status" hidden>
+  <button type="button" class="chat-launcher-teaser-close" aria-label="Dismiss">&times;</button>
+  <p>Hi! Ask me anything about our service.</p>
+</div>
 
 <!-- Chat widget: floating placement. Rendered by widget.js. Hidden until opened. -->
 <div id="chat-widget-floating" class="chat-widget chat-widget--floating" data-placement="floating" role="dialog" aria-modal="false" aria-label="Chat with the Fri Soft assistant" hidden></div>
