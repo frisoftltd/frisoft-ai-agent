@@ -1,5 +1,375 @@
 <!--
   index.html — Landing page + chat widget markup.
-  Built in: Phase 1 (Fri Soft demo site), step 2 — static page with mocked chat.
-  Placeholder only: no real markup yet.
+  Rebuilt from the approved design (docs/design/Main.dc.html = desktop,
+  docs/design/Mobile.dc.html = mobile, docs/design/Palette.dc.html = colors/fonts).
+  Built in: Phase 1 (Fri Soft demo site), Step 2 — static page with mocked chat.
+  Chat widget markup (messages, quick buttons, input row) is rendered by
+  widget.js into #chat-widget-hero and #chat-widget-floating at runtime.
 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fri Soft — AI agent for your website</title>
+<meta name="description" content="Fri Soft builds websites with an AI agent that chats and talks with your visitors, answers questions about your business and captures leads.">
+<link rel="icon" href="/logo.png"> <!-- TODO: confirm — logo.png does not exist yet, add the real Fri Soft logo file -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roboto+Serif:opsz,wdth,wght@8..144,50..150,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#top" aria-label="Fri Soft home">
+      <!-- TODO: confirm — logo.png does not exist yet, add the real Fri Soft logo file -->
+      <img class="logo" src="/logo.png" alt="Fri Soft Ltd. Our secret is your success.">
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#service">Our service</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="btn btn-accent nav-cta">Book a call</a>
+    </nav>
+    <a href="#contact" class="btn btn-accent" id="header-book-call">Book a call</a>
+  </div>
+</header>
+
+<main id="main-content">
+<div id="top"></div>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <svg class="hero-bg only-mobile" aria-hidden="true" viewBox="0 0 390 1000" preserveAspectRatio="none">
+    <path d="M-20 900 C 120 840 260 980 420 840" fill="none" stroke="#8CAB2C" stroke-width="10" stroke-linecap="round" opacity="0.3"></path>
+    <path d="M-20 930 C 130 880 270 1010 420 880" fill="none" stroke="#14529B" stroke-width="6" stroke-linecap="round" opacity="0.15"></path>
+  </svg>
+  <svg class="hero-bg only-desktop" aria-hidden="true" viewBox="0 0 1440 800" preserveAspectRatio="none">
+    <path d="M-60 700 C 320 560 880 830 1500 490" fill="none" stroke="#8CAB2C" stroke-width="14" stroke-linecap="round" opacity="0.3"></path>
+    <path d="M-60 740 C 340 610 900 870 1500 540" fill="none" stroke="#14529B" stroke-width="8" stroke-linecap="round" opacity="0.15"></path>
+  </svg>
+
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="badge">AI agent for your website</p>
+      <h1>Every visitor gets an answer <span class="accent-text">in seconds.</span> You get the lead on your phone.</h1>
+      <p class="lead">Fri Soft builds websites with an AI agent that chats and talks with your visitors, answers questions about your business and captures leads, even when nobody is in the office.</p>
+      <div class="hero-ctas">
+        <a href="#chat" class="btn btn-accent">Try the agent now</a>
+        <a href="#contact" class="btn btn-outline">Book a call</a>
+      </div>
+      <ul class="hero-facts">
+        <li>Answers only from your business facts</li>
+        <li>Honest handoff to a person</li>
+        <li>English and French</li>
+      </ul>
+    </div>
+
+    <div class="hero-chat-frame" id="chat">
+      <div class="hero-chat-hills">
+        <svg class="only-mobile" aria-hidden="true" viewBox="0 0 360 560" preserveAspectRatio="xMidYMax slice">
+          <defs>
+            <linearGradient id="skyMob" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#E3EDF9"></stop>
+              <stop offset="1" stop-color="#F4F8E8"></stop>
+            </linearGradient>
+          </defs>
+          <rect width="360" height="560" fill="url(#skyMob)"></rect>
+          <circle cx="290" cy="100" r="54" fill="#8CAB2C" opacity="0.25"></circle>
+          <circle cx="290" cy="100" r="34" fill="#8CAB2C" opacity="0.45"></circle>
+          <path d="M0 300 C 50 256 110 284 170 246 C 232 208 296 260 360 220 L360 560 L0 560 Z" fill="#D5E2F2"></path>
+          <path d="M0 368 C 66 316 130 360 196 322 C 262 286 312 332 360 300 L360 560 L0 560 Z" fill="#B7CE72" opacity="0.92"></path>
+          <path d="M0 396 C 66 346 130 390 196 352 C 262 318 312 362 360 330" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="2"></path>
+          <path d="M0 454 C 80 394 156 450 232 408 C 296 374 332 410 360 392 L360 560 L0 560 Z" fill="#14529B"></path>
+          <path d="M0 520 C 94 478 180 530 266 496 C 312 478 340 486 360 480 L360 560 L0 560 Z" fill="#0B2A57"></path>
+        </svg>
+        <svg class="only-desktop" aria-hidden="true" viewBox="0 0 500 640" preserveAspectRatio="xMidYMax slice">
+          <defs>
+            <linearGradient id="skyHero" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#E3EDF9"></stop>
+              <stop offset="1" stop-color="#F4F8E8"></stop>
+            </linearGradient>
+          </defs>
+          <rect width="500" height="640" fill="url(#skyHero)"></rect>
+          <circle cx="392" cy="122" r="70" fill="#8CAB2C" opacity="0.25"></circle>
+          <circle cx="392" cy="122" r="44" fill="#8CAB2C" opacity="0.45"></circle>
+          <path d="M0 340 C 70 288 150 320 230 276 C 320 228 410 290 500 244 L500 640 L0 640 Z" fill="#D5E2F2"></path>
+          <path d="M0 420 C 90 358 180 410 270 364 C 360 320 430 376 500 336 L500 640 L0 640 Z" fill="#B7CE72" opacity="0.92"></path>
+          <path d="M0 452 C 90 392 180 442 270 398 C 360 356 430 408 500 370" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="2"></path>
+          <path d="M0 484 C 90 426 180 476 270 432 C 360 392 430 442 500 406" fill="none" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"></path>
+          <path d="M0 520 C 110 448 215 518 320 466 C 410 424 460 468 500 444 L500 640 L0 640 Z" fill="#14529B"></path>
+          <path d="M0 592 C 130 540 250 602 370 558 C 430 536 470 548 500 540 L500 640 L0 640 Z" fill="#0B2A57"></path>
+        </svg>
+      </div>
+
+      <div class="hero-reply-badge">
+        <span class="icon-circle">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5F7B14" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg>
+        </span>
+        <span>Replies in seconds</span>
+      </div>
+
+      <!-- Chat widget: hero placement. Rendered by widget.js. -->
+      <div id="chat-widget-hero" class="chat-widget" data-placement="hero">
+        <noscript>Please enable JavaScript to chat with the Fri Soft assistant.</noscript>
+      </div>
+
+      <div class="hero-chat-badge">
+        <span class="icon-circle">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B2A57" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg>
+        </span>
+        <span>
+          <strong>New lead on your phone</strong>
+          <span class="sub">Name · phone · short message</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it helps -->
+<section class="section" aria-labelledby="helps-heading">
+  <p class="eyebrow">How it helps your business</p>
+  <h2 id="helps-heading">Slow replies cost you customers. The agent never makes them wait.</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="feature-icon"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14529B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span>
+      <h3>Instant answers</h3>
+      <p>Visitors ask about your services, hours and contacts and get a reply in seconds, by chat or by voice.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5F7B14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+      <h3>Leads after hours</h3>
+      <p>When nobody is in the office, the agent collects a name and a phone number or email, and you receive the lead on your phone.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14529B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
+      <h3>Honest, never invents</h3>
+      <p>The agent answers only from your business facts. If it is not sure, it says so and offers to connect the visitor to a person.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Our service -->
+<section class="section" id="service" aria-labelledby="service-heading">
+  <p class="eyebrow">Our service</p>
+  <h2 id="service-heading">Two ways to get an AI agent on your website.</h2>
+  <div class="service-grid">
+    <div class="service-card is-primary">
+      <span class="service-tag">Main offer</span>
+      <h3>New website + agent</h3>
+      <p>A modern one-page or small website built by Fri Soft, with the AI agent as its main feature. It replaces your old website.</p>
+      <svg aria-hidden="true" viewBox="0 0 360 190" style="display:block;width:100%;height:auto;margin:6px 0">
+        <rect x="0" y="0" width="360" height="190" rx="16" fill="#123F78"></rect>
+        <rect x="14" y="14" width="332" height="162" rx="12" fill="#F6F8FB"></rect>
+        <path d="M14 26a12 12 0 0 1 12-12h308a12 12 0 0 1 12 12v14H14z" fill="#E1E8F2"></path>
+        <circle cx="30" cy="27" r="3.5" fill="#AFC0D8"></circle>
+        <circle cx="43" cy="27" r="3.5" fill="#AFC0D8"></circle>
+        <circle cx="56" cy="27" r="3.5" fill="#AFC0D8"></circle>
+        <rect x="32" y="58" width="150" height="13" rx="6.5" fill="#0B2A57"></rect>
+        <rect x="32" y="80" width="186" height="8" rx="4" fill="#AFC0D8"></rect>
+        <rect x="32" y="96" width="156" height="8" rx="4" fill="#AFC0D8"></rect>
+        <rect x="32" y="120" width="86" height="24" rx="12" fill="#8CAB2C"></rect>
+        <rect x="232" y="56" width="98" height="78" rx="10" fill="#D5E2F2"></rect>
+        <path d="M232 120 C 254 100 274 116 294 102 C 308 94 320 102 330 98 L330 134 L232 134 Z" fill="#14529B"></path>
+        <circle cx="312" cy="72" r="9" fill="#8CAB2C" opacity="0.7"></circle>
+        <rect x="246" y="126" width="92" height="42" rx="14" fill="#8CAB2C"></rect>
+        <rect x="258" y="138" width="58" height="6" rx="3" fill="#0B2A57"></rect>
+        <rect x="258" y="150" width="40" height="6" rx="3" fill="#0B2A57" opacity="0.55"></rect>
+      </svg>
+      <ul>
+        <li>Chat and voice, in English and French</li>
+        <li>Branded with your logo and colors</li>
+        <li>Lead capture to your phone or email</li>
+        <li>Live on your own domain</li>
+      </ul>
+    </div>
+    <div class="service-card is-secondary">
+      <span class="service-tag">Keep your website</span>
+      <h3>Agent add-on</h3>
+      <p>Happy with your current website? We set up a small agent just for your business, and you add one line of code to your site.</p>
+      <div class="code-sample">
+        <div><span class="tag">&lt;script</span> src="[your-agent-url]"<span class="tag">&gt;&lt;/script&gt;</span></div>
+        <div class="note">One line, pasted into your website.</div>
+      </div>
+      <ul>
+        <li>Works with the site you already have</li>
+        <li>Your own agent, your own settings</li>
+        <li>Same answers, same lead alerts</li>
+        <li>Ready in days, not months</li>
+      </ul>
+    </div>
+  </div>
+  <div class="plan-grid">
+    <div class="plan-card is-monthly">
+      <h3>Monthly plan</h3>
+      <p>Hosting, agent usage within a fair limit, updates to answers and content, and lead reports.</p>
+    </div>
+    <div class="plan-card is-addons">
+      <h3>Optional add-ons</h3>
+      <p>Better voice quality, WhatsApp lead alerts, extra languages and conversation reports.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Who it's for -->
+<section class="section" aria-labelledby="who-heading">
+  <p class="eyebrow">Who it is for</p>
+  <h2 id="who-heading">Built for businesses in Rwanda that lose enquiries when nobody answers fast.</h2>
+  <div class="who-grid">
+    <div class="who-card">
+      <div class="who-card-visual tint-a">
+        <svg class="wave" aria-hidden="true" viewBox="0 0 340 64" preserveAspectRatio="none"><path d="M0 42 C 60 12 120 52 190 30 C 250 12 300 36 340 22 L340 64 L0 64 Z" fill="#14529B" opacity="0.14"></path><path d="M0 54 C 80 32 150 58 230 42 C 280 32 320 46 340 40 L340 64 L0 64 Z" fill="#8CAB2C" opacity="0.4"></path></svg>
+        <span class="who-card-icon"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#14529B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a2 2 0 0 0 4 0V3M9 11v10M17 21V3c-2 1.5-3 4-3 7h3"></path></svg></span>
+      </div>
+      <div class="who-card-body">
+        <h3>Restaurants</h3>
+        <p>Menu and opening-hours questions answered at any hour, table requests captured as leads.</p>
+      </div>
+    </div>
+    <div class="who-card">
+      <div class="who-card-visual tint-b">
+        <svg class="wave" aria-hidden="true" viewBox="0 0 340 64" preserveAspectRatio="none"><path d="M0 42 C 60 12 120 52 190 30 C 250 12 300 36 340 22 L340 64 L0 64 Z" fill="#14529B" opacity="0.14"></path><path d="M0 54 C 80 32 150 58 230 42 C 280 32 320 46 340 40 L340 64 L0 64 Z" fill="#8CAB2C" opacity="0.4"></path></svg>
+        <span class="who-card-icon"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5F7B14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"></path></svg></span>
+      </div>
+      <div class="who-card-body">
+        <h3>Clinics</h3>
+        <p>Services and hours answered, appointment requests captured. The agent gives no medical advice.</p>
+      </div>
+    </div>
+    <div class="who-card">
+      <div class="who-card-visual tint-a">
+        <svg class="wave" aria-hidden="true" viewBox="0 0 340 64" preserveAspectRatio="none"><path d="M0 42 C 60 12 120 52 190 30 C 250 12 300 36 340 22 L340 64 L0 64 Z" fill="#14529B" opacity="0.14"></path><path d="M0 54 C 80 32 150 58 230 42 C 280 32 320 46 340 40 L340 64 L0 64 Z" fill="#8CAB2C" opacity="0.4"></path></svg>
+        <span class="who-card-icon"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#14529B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"></path></svg></span>
+      </div>
+      <div class="who-card-body">
+        <h3>Schools</h3>
+        <p>Parents get answers about your school, and their enquiries reach the office.</p>
+      </div>
+    </div>
+    <div class="who-card">
+      <div class="who-card-visual tint-b">
+        <svg class="wave" aria-hidden="true" viewBox="0 0 340 64" preserveAspectRatio="none"><path d="M0 42 C 60 12 120 52 190 30 C 250 12 300 36 340 22 L340 64 L0 64 Z" fill="#14529B" opacity="0.14"></path><path d="M0 54 C 80 32 150 58 230 42 C 280 32 320 46 340 40 L340 64 L0 64 Z" fill="#8CAB2C" opacity="0.4"></path></svg>
+        <span class="who-card-icon"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5F7B14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V6M3 14h18v4M21 14v-3a3 3 0 0 0-3-3h-7v6"></path><circle cx="7" cy="11" r="1.5"></circle></svg></span>
+      </div>
+      <div class="who-card-body">
+        <h3>Hotels and tour operators</h3>
+        <p>Questions about rooms and tours answered, guest enquiries sent straight to you.</p>
+      </div>
+    </div>
+    <div class="who-card">
+      <div class="who-card-visual tint-a">
+        <svg class="wave" aria-hidden="true" viewBox="0 0 340 64" preserveAspectRatio="none"><path d="M0 42 C 60 12 120 52 190 30 C 250 12 300 36 340 22 L340 64 L0 64 Z" fill="#14529B" opacity="0.14"></path><path d="M0 54 C 80 32 150 58 230 42 C 280 32 320 46 340 40 L340 64 L0 64 Z" fill="#8CAB2C" opacity="0.4"></path></svg>
+        <span class="who-card-icon"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#14529B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M6 18v-2a6 6 0 0 1 12 0v2M12 8v4M9 9.5h6"></path></svg></span>
+      </div>
+      <div class="who-card-body">
+        <h3>Construction and service firms</h3>
+        <p>Quote requests captured with a name, a phone number and a short description.</p>
+      </div>
+    </div>
+    <div class="who-card">
+      <div class="who-card-visual tint-b">
+        <svg class="wave" aria-hidden="true" viewBox="0 0 340 64" preserveAspectRatio="none"><path d="M0 42 C 60 12 120 52 190 30 C 250 12 300 36 340 22 L340 64 L0 64 Z" fill="#14529B" opacity="0.14"></path><path d="M0 54 C 80 32 150 58 230 42 C 280 32 320 46 340 40 L340 64 L0 64 Z" fill="#8CAB2C" opacity="0.4"></path></svg>
+        <span class="who-card-icon"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5F7B14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"></path><path d="M9 8a3 3 0 0 1 6 0"></path></svg></span>
+      </div>
+      <div class="who-card-body">
+        <h3>Shops</h3>
+        <p>Product and opening-hours questions answered, interested buyers handed to your team.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section" id="how" aria-labelledby="how-heading">
+  <p class="eyebrow">How it works</p>
+  <h2 id="how-heading">From first call to live agent in four steps.</h2>
+  <div class="steps-grid">
+    <div class="step">
+      <span class="step-number">1</span>
+      <h3>A short call</h3>
+      <p>We learn what you sell, what customers ask most, and what counts as a lead for you.</p>
+    </div>
+    <div class="step">
+      <span class="step-number">2</span>
+      <h3>You share your content</h3>
+      <p>Services, prices or "contact us", hours, contacts, your logo, and ten real questions customers ask.</p>
+    </div>
+    <div class="step">
+      <span class="step-number">3</span>
+      <h3>We build and launch</h3>
+      <p>We set up your agent, test it on phone and desktop, and put it live on your domain.</p>
+    </div>
+    <div class="step">
+      <span class="step-number">4</span>
+      <h3>We tune it with you</h3>
+      <p>After two weeks we review real conversations together and improve the answers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section" id="pricing" aria-labelledby="pricing-heading">
+  <p class="eyebrow">Pricing</p>
+  <h2 id="pricing-heading">Simple pricing in Rwandan francs.</h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <h3>Setup, once</h3>
+      <!-- TODO: confirm -->
+      <div class="price-value">[Setup fee, RWF]</div>
+      <p>Covers building your website and agent, or setting up the add-on, plus your content and launch.</p>
+    </div>
+    <div class="price-card">
+      <h3>Monthly plan</h3>
+      <!-- TODO: confirm -->
+      <div class="price-value">[Monthly fee, RWF]</div>
+      <!-- TODO: confirm fair-use limit -->
+      <p>Hosting, usage within [fair-use limit], updates and lead reports.</p>
+    </div>
+  </div>
+  <p class="pricing-note">Prices shown in brackets are placeholders until Fri Soft confirms them.</p>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact" aria-labelledby="contact-heading">
+  <div class="contact-panel">
+    <svg class="contact-panel-bg only-mobile" aria-hidden="true" viewBox="0 0 600 220" preserveAspectRatio="xMaxYMax slice"><path d="M0 150 C 100 90 200 150 300 110 C 400 70 500 120 600 80 L600 220 L0 220 Z" fill="#14529B" opacity="0.55"></path><path d="M0 190 C 120 140 240 200 360 160 C 460 126 540 160 600 140 L600 220 L0 220 Z" fill="#8CAB2C" opacity="0.35"></path></svg>
+    <svg class="contact-panel-bg only-desktop" aria-hidden="true" viewBox="0 0 600 220" preserveAspectRatio="xMaxYMax slice"><path d="M0 150 C 100 90 200 150 300 110 C 400 70 500 120 600 80 L600 220 L0 220 Z" fill="#14529B" opacity="0.55"></path><path d="M0 190 C 120 140 240 200 360 160 C 460 126 540 160 600 140 L600 220 L0 220 Z" fill="#8CAB2C" opacity="0.35"></path></svg>
+    <div class="contact-copy">
+      <h2 id="contact-heading">Want this on your website?</h2>
+      <p class="lead">Tell us about your business. We will show you how the agent would answer your customers.</p>
+      <a href="#chat" class="btn btn-accent">Book a call</a>
+    </div>
+    <div class="contact-details">
+      <div><div class="label">Phone</div><div class="value"><!-- TODO: confirm -->[Phone number]</div></div>
+      <div><div class="label">WhatsApp</div><div class="value"><!-- TODO: confirm -->[WhatsApp number]</div></div>
+      <div><div class="label">Email</div><div class="value">frisoftltd@gmail.com</div></div>
+      <div><div class="label">Location</div><div class="value">Kigali, Rwanda</div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 Fri Soft Ltd, Kigali, Rwanda</span>
+    <span>Also from Fri Soft Ltd: Dish Dash, FSA_v2 and private business email hosting.</span>
+  </div>
+</footer>
+
+<!-- Floating launcher, shown once the hero chat scrolls out of view -->
+<button id="chat-launcher" class="chat-launcher" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-widget-floating" aria-label="Chat with the Fri Soft assistant">
+  <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>
+</button>
+
+<!-- Chat widget: floating placement. Rendered by widget.js. Hidden until opened. -->
+<div id="chat-widget-floating" class="chat-widget chat-widget--floating" data-placement="floating" role="dialog" aria-modal="false" aria-label="Chat with the Fri Soft assistant" hidden></div>
+
+<script src="widget.js"></script>
+</body>
+</html>

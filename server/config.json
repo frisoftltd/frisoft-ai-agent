@@ -1,30 +1,66 @@
 {
-  "_comment": "config.json — All business-specific data for this client project: branding, system prompt, services, contacts, caps. Built in: Phase 1 (Fri Soft demo site) and Phase 2 (template-ization). Skeleton only — see docs/ briefs for source rules. Values not given in the briefs are marked TODO: confirm.",
+  "_comment": "config.json — All business-specific data for this client project: branding, system prompt, services, contacts, caps. The site sells the AI agent website service itself (not Dish Dash/FSA_v2/web dev, which are only mentioned in the footer as other Fri Soft products). Built in: Phase 1 (Fri Soft demo site). Values not given in the briefs are the string TODO: confirm.",
   "businessName": "Fri Soft Ltd",
   "model": "claude-haiku-5-5",
-  "systemPrompt": "You are a friendly, concise assistant for Fri Soft Ltd, a software company in Kigali, Rwanda. Answer only from the services, prices, hours and contacts in this config. If unsure, say so honestly and offer to connect the visitor to a person. Never invent prices, timelines or promises. Keep answers to 2-4 sentences and ask one question at a time. When a visitor shows buying interest, ask for their name and phone or email to capture a lead. Stay on Fri Soft's business and politely decline unrelated requests. TODO: confirm final tone/voice and any additions once real FAQs are collected.",
-  "services": [
+  "systemPrompt": "You are Fri Soft's AI assistant. Tell visitors you are an AI. Answer only using the services, pricing, hours and contact facts given to you in this config. If you are not sure, or the fact is not in this config, say so honestly and offer to connect the visitor to a person at Fri Soft. Never invent prices, timelines, promises or policies. Keep replies short, 2-4 sentences, and ask only one question at a time. When a visitor shows interest in buying, collect only their name and a phone number or email, plus a short message describing what they need — nothing more. Do not give payment, medical or legal advice. Stay focused on Fri Soft's AI agent website service and politely decline unrelated requests.",
+  "greeting": "Hi, how can I help you? I'm Fri Soft's AI assistant, so I can answer questions about our service in a few seconds.",
+  "quickButtons": [
     {
-      "name": "Dish Dash",
-      "description": "TODO: confirm — restaurant ordering SaaS.",
-      "price": "TODO: confirm"
+      "label": "Our service",
+      "answer": "Fri Soft builds websites with an AI agent that chats and talks with your visitors, answers questions about your business, and captures leads. We also offer an agent add-on if you'd rather keep your current website. Want pricing, or would you like to book a call?"
     },
     {
-      "name": "FSA_v2",
-      "description": "TODO: confirm — trading journal.",
-      "price": "TODO: confirm"
+      "label": "Pricing",
+      "answer": "Setup is a one-time fee, then a monthly plan covers hosting, usage within a fair limit, and lead reports. TODO: confirm — Fri Soft is still finalising exact numbers. Want me to connect you with the team for a quote?"
     },
     {
-      "name": "Custom web development",
-      "description": "TODO: confirm",
-      "price": "TODO: confirm"
+      "label": "Book a call",
+      "answer": "I'd love to set that up. Could I get your name and a phone number or email so the team can call you back?"
     },
     {
-      "name": "Private business email hosting",
-      "description": "TODO: confirm",
-      "price": "TODO: confirm"
+      "label": "Contact",
+      "answer": "You can reach Fri Soft by email at frisoftltd@gmail.com, in Kigali, Rwanda. TODO: confirm phone and WhatsApp numbers. Would you like to leave your details instead and have us reach out?"
     }
   ],
+  "services": [
+    {
+      "name": "New website + agent",
+      "tag": "Main offer",
+      "description": "A modern one-page or small website built by Fri Soft, with the AI agent as its main feature. It replaces the client's old website."
+    },
+    {
+      "name": "Agent add-on",
+      "tag": "Keep your website",
+      "description": "For clients who keep their current site. Fri Soft deploys a small separate agent backend, and the client adds one script tag."
+    },
+    {
+      "name": "Monthly plan",
+      "description": "Hosting, agent usage within a fair limit, updates to answers and content, and lead reports."
+    },
+    {
+      "name": "Optional add-ons",
+      "description": "Better voice quality, WhatsApp lead alerts, extra languages and conversation reports."
+    }
+  ],
+  "howItWorks": [
+    { "step": 1, "title": "A short call", "description": "We learn what you sell, what customers ask most, and what counts as a lead for you." },
+    { "step": 2, "title": "You share your content", "description": "Services, prices or \"contact us\", hours, contacts, your logo, and ten real questions customers ask." },
+    { "step": 3, "title": "We build and launch", "description": "We set up your agent, test it on phone and desktop, and put it live on your domain." },
+    { "step": 4, "title": "We tune it with you", "description": "After two weeks we review real conversations together and improve the answers." }
+  ],
+  "whoItIsFor": [
+    "Restaurants",
+    "Clinics",
+    "Schools",
+    "Hotels and tour operators",
+    "Construction and service firms",
+    "Shops"
+  ],
+  "pricing": {
+    "setupFee": "TODO: confirm",
+    "monthlyFee": "TODO: confirm",
+    "fairUseLimit": "TODO: confirm"
+  },
   "hours": "TODO: confirm",
   "contacts": {
     "email": "frisoftltd@gmail.com",
@@ -34,19 +70,26 @@
   },
   "brand": {
     "colors": {
-      "primary": "TODO: confirm",
-      "accent": "TODO: confirm",
-      "background": "TODO: confirm"
+      "blue": "#14529B",
+      "navy": "#0B2A57",
+      "green": "#8CAB2C",
+      "greenDark": "#5F7B14",
+      "ground": "#F6F8FB",
+      "blueTint": "#EEF3FA",
+      "greenTint": "#F1F6E1",
+      "ink": "#14213A"
+    },
+    "fonts": {
+      "display": "Roboto Serif (stand-in for ITC Cheltenham Condensed), font-stretch 75%, weight 700",
+      "body": "Plus Jakarta Sans"
     }
   },
-  "greeting": "Hi, how can I help you?",
-  "quickButtons": ["Services", "Pricing", "Book a call", "Contact"],
   "leadEmail": "frisoftltd@gmail.com",
   "allowedDomain": "TODO: confirm",
   "monthlyMessageCap": "TODO: confirm",
   "languages": {
     "default": "en",
-    "supported": ["en", "fr"],
+    "replyInVisitorLanguage": ["fr"],
     "bestEffort": ["rw"]
   }
 }

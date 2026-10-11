@@ -31,7 +31,7 @@ This project is a single-tenant template: no multi-client logic and no `clientId
 Modern, clean, fast, mobile-first (most visitors are on phones).
 - Hero: headline about building software that works for Rwandan businesses, with the AI agent chat embedded or opening automatically below it.
 - Quick buttons: Services, Pricing, Book a call, Contact. Static answers come from the config and do not call the API.
-- Services section: Dish Dash (restaurant ordering SaaS), FSA_v2 trading journal, custom web development, private business email hosting. Use placeholder copy and mark `TODO: confirm` where details are unknown.
+- Services section: the site sells the AI agent service itself, not Fri Soft's other products. Two offers (New website + agent, Agent add-on), plus Monthly plan and Optional add-ons. Also: How it helps, Who it is for (restaurants, clinics, schools, hotels and tour operators, construction and service firms, shops), How it works (4 steps), Pricing. Dish Dash, FSA_v2 and web development are mentioned only once, in the footer, as other Fri Soft products — not part of this services section. Mark `TODO: confirm` where details (prices, hours, phone, WhatsApp) are unknown.
 - Contact fallback: phone, email (frisoftltd@gmail.com), location, WhatsApp link, for visitors who prefer reading.
 - Visual direction: dark or light neutral base, one strong accent color, generous spacing, subtle animation on the chat opening. Avoid generic template look. Propose a palette and show it before building everything.
 
@@ -49,13 +49,15 @@ Modern, clean, fast, mobile-first (most visitors are on phones).
 - CORS restricted to the site's own domain (configurable) so others cannot use our endpoint.
 - Basic input sanitation and no logging of the API key.
 
-## Agent system prompt (for `frisoft.json`)
-- Role: friendly, concise assistant for Fri Soft Ltd, a software company in Kigali.
-- Knows only the services and facts in the config. If unsure, say so and offer to connect the visitor to a person. Never invent prices, timelines or promises.
-- Keeps answers to 2-4 sentences. Asks one question at a time.
-- When a visitor shows buying interest, asks for name and phone (or email) and triggers the lead capture.
-- Stays on Fri Soft's business; politely declines unrelated requests.
-- Placeholders for pricing and hours marked `TODO: confirm` so I can fill them in.
+## Agent system prompt (in `server/config.json`)
+- Role: Fri Soft's AI assistant, selling the AI agent website service (not Fri Soft's other products like Dish Dash or FSA_v2).
+- Tells the visitor it is an AI.
+- Knows only the services, pricing, hours and contacts in the config. If unsure, says so and offers to connect the visitor to a person. Never invents prices, promises or policies.
+- Keeps replies short (2-4 sentences). Asks one question at a time.
+- When a visitor shows buying interest, collects only name and phone or email, plus a short message — nothing more.
+- No payment, medical or legal advice.
+- Stays on the AI agent service; politely declines unrelated requests.
+- Placeholders for pricing, hours, phone and WhatsApp number marked `TODO: confirm` so I can fill them in.
 
 ## Deliverables and process
 1. Show the proposed folder structure and design palette first, then wait for my OK.
