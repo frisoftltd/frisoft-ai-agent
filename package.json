@@ -5,7 +5,8 @@
   "description": "Single-tenant template: static site + AI chat/voice agent + lead capture, for Fri Soft Ltd and future client copies.",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "zip": "powershell -ExecutionPolicy Bypass -File scripts/make-zip.ps1"
   },
   "dependencies": {
     "express": "^4.19.2"
