@@ -60,3 +60,26 @@ To deploy:
 4. Set the required environment variables (see `.env.example`) in the app's config, then restart the app.
 
 `deploy/` is gitignored — the zip is a build output, never committed. Re-run `npm run zip:app` after any change to `package.json`, `server/`, or `public/` before re-uploading.
+
+This zip-upload flow still works as a fallback (e.g. if Git deployment below isn't set up yet), but once cPanel Git Version Control is configured, prefer that — no zip, no manual upload.
+
+## Deploy updates with cPanel Git Version Control
+
+`.cpanel.yml` at the repo root lets cPanel pull this repo and deploy it into the app root directly, without building or uploading a zip for every change.
+
+### One-time setup
+
+1. In cPanel, open **Git Version Control** → **Create**.
+2. Clone URL: `https://github.com/frisoftltd/frisoft-ai-agent.git`
+3. Repository path: `repositories/frisoft-ai-agent` (clones to `$HOME/repositories/frisoft-ai-agent`).
+4. Leave the checkout branch as `main`.
+5. After the first clone, go to **Setup Node.js App**, open the `frisoft-ai-agents` app, and click **Run NPM Install** once to populate `node_modules`.
+
+### Routine updates
+
+1. Push your changes to `main` on GitHub as usual.
+2. In cPanel's **Git Version Control**, open the repo and click **Update from Remote** (pulls the new commits into `$HOME/repositories/frisoft-ai-agent`).
+3. Click **Deploy HEAD Commit**. This runs `.cpanel.yml`, which copies `package.json`, `package-lock.json`, `server/`, and `public/` into `$HOME/frisoft-ai-agents/` (overwriting the old copies, never deleting anything else there) and then touches `tmp/restart.txt` to restart the app.
+4. Only re-run **Run NPM Install** in **Setup Node.js App** if `package.json`/`package-lock.json` changed (new or updated dependency) — a plain code change to `server/` or `public/` doesn't need it.
+
+Environment variables such as `ANTHROPIC_API_KEY`, `LEAD_EMAIL`, and the SMTP settings live **only** in the **Setup Node.js App** page's environment variable editor — they are never committed to the repo and `.cpanel.yml` never touches `.env`.

@@ -1,0 +1,16 @@
+---
+deployment:
+  tasks:
+    # Resolve the app root once; $HOME never hardcodes the cPanel username (repo is public).
+    - export DEPLOYPATH=$HOME/frisoft-ai-agents
+    # Make sure destination folders exist (needed on a first deploy from a fresh clone).
+    - /bin/mkdir -p $DEPLOYPATH/server
+    - /bin/mkdir -p $DEPLOYPATH/public
+    # Copy app files into the app root, overwriting existing copies; cp never deletes extra files.
+    - /bin/cp -f package.json $DEPLOYPATH/
+    - /bin/cp -f package-lock.json $DEPLOYPATH/
+    - /bin/cp -r server/. $DEPLOYPATH/server/
+    - /bin/cp -r public/. $DEPLOYPATH/public/
+    # Create tmp/ if missing, then touch restart.txt so Passenger restarts the Node app.
+    - /bin/mkdir -p $DEPLOYPATH/tmp
+    - /bin/touch $DEPLOYPATH/tmp/restart.txt
