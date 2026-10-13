@@ -6,7 +6,8 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "zip": "powershell -ExecutionPolicy Bypass -File scripts/make-zip.ps1"
+    "zip": "powershell -ExecutionPolicy Bypass -File scripts/make-zip.ps1",
+    "zip:app": "powershell -ExecutionPolicy Bypass -File scripts/make-app-zip.ps1"
   },
   "dependencies": {
     "express": "^4.19.2"
